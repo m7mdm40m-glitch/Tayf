@@ -320,6 +320,19 @@ const VIDEO_MODELS = [
 // نموذج التجربة المجانية (الأرخص). النماذج الأخرى تُفتح بالاشتراك.
 const FREE_MODEL = "kling26";
 
+// عنوان الخادم الخلفي (Render). يمكن تغييره لاحقاً من متغيّر بيئة Vite.
+const API_BASE = (import.meta.env && import.meta.env.VITE_API_BASE) || "https://tayf-backend.onrender.com";
+
+// طبقة تخزين متوافقة مع المتصفّح: تستخدم localStorage إن لم تتوفّر window.storage الخاصة بالمنصّة.
+const storage = (typeof window !== "undefined" && window.storage) ? window.storage : {
+  async get(key) {
+    try { const v = localStorage.getItem(key); return v == null ? null : { key, value: v }; }
+    catch (e) { return null; }
+  },
+  async set(key, value) { try { localStorage.setItem(key, value); } catch (e) {} return { key, value }; },
+  async delete(key) { try { localStorage.removeItem(key); } catch (e) {} return { key }; },
+};
+
 // خطط الاشتراك — مصمّمة بهامش ربح (تكلفة العملة عليك ≈ ٠.٠٧ دولار)
 const PLANS = [
   { id: "starter", nameKey: "p1", price: 15, credits: 60 },
@@ -341,6 +354,11 @@ export default function App() {
   const [enhanced, setEnhanced] = useState("");
   const [enhanceErr, setEnhanceErr] = useState("");
   const [generated, setGenerated] = useState(null);
+  const [token, setToken] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [genErr, setGenErr] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authNote, setAuthNote] = useState("");
   const taRef = useRef(null);
 
   // ---- الحسابات والتجربة المجانية ----
@@ -352,21 +370,38 @@ export default function App() {
   const [fPass, setFPass] = useState("");
   const [authErr, setAuthErr] = useState("");
   const [noCredit, setNoCredit] = useState(false);
-  const accountsRef = useRef({});
-
   const a = AUTH[lang];
 
-  // تحميل الحسابات والجلسة المحفوظة
+  // تحميل الجلسة المحفوظة (التوكن والمستخدم) ثم تحديث الرصيد من الخادم
   useEffect(() => {
     (async () => {
+      let savedToken = null, savedUser = null;
       try {
-        const acc = await window.storage.get("tayf:accounts");
-        if (acc?.value) accountsRef.current = JSON.parse(acc.value);
+        const ses = await storage.get("tayf:session");
+        if (ses?.value) {
+          const parsed = JSON.parse(ses.value);
+          savedToken = parsed.token || null;
+          savedUser = parsed.user || null;
+        }
       } catch (e) {}
-      try {
-        const ses = await window.storage.get("tayf:session");
-        if (ses?.value) setUser(JSON.parse(ses.value));
-      } catch (e) {}
+      if (savedToken && savedUser) {
+        setToken(savedToken);
+        setUser(savedUser);
+        // تحديث الرصيد الفعلي من الخادم
+        try {
+          const r = await fetch(API_BASE + "/api/me", {
+            headers: { Authorization: "Bearer " + savedToken },
+          });
+          if (r.ok) {
+            const d = await r.json();
+            if (d.user) setUser(d.user);
+          } else if (r.status === 401) {
+            // توكن منتهٍ — تنظيف
+            setToken(null); setUser(null);
+            try { await storage.delete("tayf:session"); } catch (e) {}
+          }
+        } catch (e) {}
+      }
     })();
   }, []);
 
@@ -376,46 +411,73 @@ export default function App() {
     return "h" + h.toString(36);
   }
 
-  async function persistUser(u) {
-    setUser(u);
-    if (u) accountsRef.current[u.email] = { ...accountsRef.current[u.email], ...u };
-    try { await window.storage.set("tayf:accounts", JSON.stringify(accountsRef.current)); } catch (e) {}
+  // حفظ الجلسة (التوكن + المستخدم) في التخزين المحلي
+  async function saveSession(tok, u) {
+    setToken(tok); setUser(u);
     try {
-      if (u) await window.storage.set("tayf:session", JSON.stringify(u));
-      else await window.storage.delete("tayf:session");
+      if (tok && u) await storage.set("tayf:session", JSON.stringify({ token: tok, user: u }));
+      else await storage.delete("tayf:session");
     } catch (e) {}
   }
 
   function openAuth(mode) {
-    setAuthMode(mode); setAuthErr(""); setNoCredit(false);
+    setAuthMode(mode); setAuthErr(""); setNoCredit(false); setAuthNote("");
     setFName(""); setFEmail(""); setFPass(""); setAuthOpen(true);
   }
 
-  function submitAuth() {
-    setAuthErr("");
+  async function submitAuth() {
+    if (authBusy) return;
+    setAuthErr(""); setAuthNote("");
     const email = fEmail.trim().toLowerCase();
     if (authMode === "signup") {
       if (!fName.trim() || !email || !fPass) { setAuthErr(a.errFields); return; }
-      if (accountsRef.current[email]) { setAuthErr(a.errEmail); return; }
-      const u = { name: fName.trim(), email, pass: hash(fPass), seconds: FREE_SECONDS };
-      persistUser(u); setAuthOpen(false);
     } else {
       if (!email || !fPass) { setAuthErr(a.errFields); return; }
-      const rec = accountsRef.current[email];
-      if (!rec || rec.pass !== hash(fPass)) { setAuthErr(a.errLogin); return; }
-      persistUser({ name: rec.name, email, pass: rec.pass, seconds: rec.seconds ?? 0 });
-      setAuthOpen(false);
+    }
+    setAuthBusy(true);
+    try {
+      if (authMode === "signup") {
+        const r = await fetch(API_BASE + "/api/signup", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: fName.trim(), email, password: fPass }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          if (d.error === "EMAIL_EXISTS") setAuthErr(a.errEmail);
+          else if (d.error === "DISPOSABLE_EMAIL") setAuthErr(a.errEmail);
+          else setAuthErr(a.errFields);
+          return;
+        }
+        // الخادم أرسل بريد تأكيد — لا يوجد رصيد قبل التأكيد
+        setAuthNote(a.verifySent || "تم إرسال رابط التأكيد إلى بريدك. فعّل حسابك ثم سجّل الدخول.");
+      } else {
+        const r = await fetch(API_BASE + "/api/login", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: fPass }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          if (d.error === "EMAIL_NOT_VERIFIED") setAuthErr(a.notVerified || "فعّل بريدك أولاً عبر الرابط المُرسل.");
+          else setAuthErr(a.errLogin);
+          return;
+        }
+        await saveSession(d.token, d.user);
+        setAuthOpen(false);
+      }
+    } catch (e) {
+      setAuthErr(t.errConn || "تعذّر الاتصال بالخادم.");
+    } finally {
+      setAuthBusy(false);
     }
   }
 
-  function logout() { persistUser(null); }
+  function logout() { saveSession(null, null); }
 
-  // الاشتراك (تجريبي): يفتح كل النماذج ويضيف رصيد الخطة
+  // الاشتراك: حالياً تجريبي على الواجهة (الدفع الحقيقي لاحقاً)
   const [plansOpen, setPlansOpen] = useState(false);
   function subscribe(plan) {
     if (!user) { setPlansOpen(false); openAuth("signup"); return; }
-    persistUser({ ...user, subscribed: true, plan: plan.id,
-      seconds: (user.seconds ?? 0) + plan.credits });
+    setUser({ ...user, subscribed: true, plan: plan.id });
     setPlansOpen(false); setNoCredit(false);
   }
   function openPlans() { if (!user) { openAuth("signup"); } else { setPlansOpen(true); } }
@@ -429,29 +491,20 @@ export default function App() {
     if (!prompt.trim() || enhancing) return;
     setEnhancing(true); setEnhanceErr(""); setEnhanced("");
     const styleEn = STYLE_IDS.find((s) => s.id === style)?.en || "";
-    const sys =
-      "You are an expert prompt engineer for AI " + (mode === "video" ? "video" : "image") +
-      " generation (Veo/Kling/Flux/Midjourney style). The user writes an idea in ANY language " +
-      "— auto-detect it, understand the intent, and rewrite it as ONE rich, vivid English generation prompt. " +
-      "Add concrete details about subject, composition, lighting, mood, color, lens/camera" +
-      (mode === "video" ? ", and camera motion" : "") +
-      ". Incorporate this style: '" + styleEn + "'. " +
-      "Return ONLY the final English prompt, no preamble, no quotes, no markdown.";
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch(API_BASE + "/api/enhance", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000,
-          messages: [{ role: "user", content: sys + "\n\nThe idea: " + prompt.trim() }] }),
+        body: JSON.stringify({ prompt: prompt.trim(), mode, styleEn }),
       });
-      const data = await res.json();
-      const text = (data.content || []).map((b) => (b.type === "text" ? b.text : "")).join("").trim();
-      if (text) setEnhanced(text); else setEnhanceErr(t.errRetry);
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.enhanced) setEnhanced(data.enhanced);
+      else setEnhanceErr(t.errRetry);
     } catch (e) { setEnhanceErr(t.errConn); }
     finally { setEnhancing(false); }
   }
 
-  // الرصيد والتكلفة: الفيديو يخصم مدته (ثوانٍ)، كل صورة تخصم عملة واحدة
-  const freeLeft = user ? (user.seconds ?? 0) : FREE_SECONDS;
+  // الرصيد يأتي من الخادم (user.credits). قبل الدخول نعرض رصيد التجربة كتلميح.
+  const freeLeft = user ? (user.credits ?? 0) : FREE_SECONDS;
   // التجربة المجانية مقيّدة بالنموذج الأرخص؛ النماذج الأخرى للمشتركين
   const isFree = user ? !user.subscribed : true;
   const effModel = isFree ? FREE_MODEL : vModel;
@@ -463,25 +516,63 @@ export default function App() {
   const dDur = Math.min(duration, vMax);
   const cost = mode === "video" ? effCount * dDur * modelMult : effCount;
 
-  function generate() {
-    if (!user) { openAuth("signup"); return; }
+  async function generate() {
+    if (!user || !token) { openAuth("signup"); return; }
     if (!prompt.trim()) { taRef.current && taRef.current.focus(); return; }
+    if (generating) return;
     if (freeLeft < cost) { setNoCredit(true); return; }
+    setGenerating(true); setGenErr(""); setGenerated(null);
     const r = RATIO_IDS.find((x) => x.id === ratio);
-    setGenerated({ mode, ratio: r, count: effCount, duration: dDur,
-      style: t.styles[STYLE_IDS.find((s) => s.id === style)?.k],
-      prompt: enhanced || prompt, stamp: Date.now() });
-    persistUser({ ...user, seconds: freeLeft - cost });
+    try {
+      const res = await fetch(API_BASE + "/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+        body: JSON.stringify({
+          mode,
+          model: effModel,
+          prompt: enhanced || prompt.trim(),
+          ratio,
+          duration: dDur,
+          count: effCount,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.error === "INSUFFICIENT_CREDITS") { setNoCredit(true); }
+        else if (res.status === 401) { setGenErr(t.errConn || "انتهت الجلسة، سجّل الدخول من جديد."); logout(); }
+        else { setGenErr(t.errRetry || "تعذّر التوليد، حاول مرة أخرى."); }
+        return;
+      }
+      const outputs = data.outputs || [];
+      setGenerated({
+        mode, ratio: r, count: outputs.length || effCount, duration: dDur,
+        style: t.styles[STYLE_IDS.find((s) => s.id === style)?.k],
+        prompt: enhanced || prompt, stamp: Date.now(),
+        outputs,
+      });
+      // تحديث الرصيد من رد الخادم
+      if (typeof data.creditsLeft === "number") {
+        const nu = { ...user, credits: data.creditsLeft };
+        setUser(nu);
+        try { await storage.set("tayf:session", JSON.stringify({ token, user: nu })); } catch (e) {}
+      }
+    } catch (e) {
+      setGenErr(t.errConn || "تعذّر الاتصال بالخادم.");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   return (
     <div dir={dir} className="tayf-root" lang={lang}>
       <style>{CSS}</style>
 
+      <div className="wavebg" aria-hidden="true" />
       <div className="aurora" aria-hidden="true">
         <span className={"blob b1" + (reduce ? " still" : "")} />
         <span className={"blob b2" + (reduce ? " still" : "")} />
         <span className={"blob b3" + (reduce ? " still" : "")} />
+        <span className={"blob b4" + (reduce ? " still" : "")} />
       </div>
 
       <header className="topbar">
@@ -517,7 +608,7 @@ export default function App() {
         {user ? (
           <div className="acct">
             <span className="acct-credits" title={a.credits}>
-              <IconSpark /> {user.seconds} {a.left}
+              <IconSpark /> {user.credits ?? 0} {a.left}
             </span>
             <span className="acct-name">{user.name}</span>
             {user.subscribed && <span className="acct-sub" title={a.subOk}>✓</span>}
@@ -635,9 +726,20 @@ export default function App() {
             </div>
           </div>
 
-          <button className="generate" onClick={generate}>
-            <IconBolt />{mode === "video" ? t.genVid : t.genImg}
+          <button className="generate" onClick={generate} disabled={generating}
+            style={generating ? { opacity: 0.75, cursor: "wait" } : null}>
+            <IconBolt />{generating ? (t.generating || "جارٍ التوليد…") : (mode === "video" ? t.genVid : t.genImg)}
           </button>
+
+          {generating && (
+            <div className="cost-hint">
+              <IconSpark /> {t.genWait || "قد يستغرق التوليد بعض الوقت، خاصةً للفيديو — يرجى الانتظار."}
+            </div>
+          )}
+
+          {genErr && (
+            <div className="nocredit"><span>{genErr}</span></div>
+          )}
 
           {user && !noCredit && (
             <div className="cost-hint">
@@ -663,11 +765,27 @@ export default function App() {
                   <span>·</span><span>{generated.count} {t.result}</span>
                 </div>
                 <div className="grid">
-                  {Array.from({ length: generated.count }).map((_, i) => (
+                  {(generated.outputs && generated.outputs.length
+                    ? generated.outputs
+                    : Array.from({ length: generated.count })
+                  ).map((out, i) => (
                     <div key={i} className="card"
                       style={{ aspectRatio: generated.ratio.w + "/" + generated.ratio.h }}>
                       <div className="card-glow" />
-                      {generated.mode === "video" ? <IconVideo /> : <IconImage />}
+                      {out ? (
+                        generated.mode === "video" ? (
+                          <video src={out} controls playsInline
+                            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }} />
+                        ) : (
+                          <a href={out} target="_blank" rel="noreferrer"
+                            style={{ display: "block", width: "100%", height: "100%" }}>
+                            <img src={out} alt={"result " + (i + 1)}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }} />
+                          </a>
+                        )
+                      ) : (
+                        generated.mode === "video" ? <IconVideo /> : <IconImage />
+                      )}
                       <span className="card-num">{i + 1}</span>
                     </div>
                   ))}
@@ -727,13 +845,15 @@ export default function App() {
             </div>
 
             {authErr && <div className="err">{authErr}</div>}
+            {authNote && <div className="cost-hint" style={{ marginTop: 10 }}><IconSpark /> {authNote}</div>}
 
-            <button className="modal-submit" onClick={submitAuth}>
-              {authMode === "signup" ? a.doSu : a.doLi}
+            <button className="modal-submit" onClick={submitAuth} disabled={authBusy}
+              style={authBusy ? { opacity: 0.75, cursor: "wait" } : null}>
+              {authBusy ? "…" : (authMode === "signup" ? a.doSu : a.doLi)}
             </button>
 
             <button className="modal-toggle"
-              onClick={() => { setAuthMode(authMode === "signup" ? "login" : "signup"); setAuthErr(""); }}>
+              onClick={() => { setAuthMode(authMode === "signup" ? "login" : "signup"); setAuthErr(""); setAuthNote(""); }}>
               {authMode === "signup" ? a.have : a.no}
             </button>
 
@@ -810,15 +930,22 @@ const CSS = `
 .tayf-root h1,.tayf-root h2,.tayf-root h3{font-family:'Tajawal','Noto Sans','Noto Sans Devanagari',sans-serif;margin:0}
 .tayf-root a{color:inherit;text-decoration:none}
 
-.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;filter:blur(70px);opacity:.55}
+/* طبقة تموّج لوني متحرّكة خلف كل شيء */
+.wavebg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(125deg,#FF4FA3,#8B5CF6,#36D1FF,#A855F7,#FF6FB5);
+  background-size:300% 300%;animation:wave 18s ease-in-out infinite;opacity:.40}
+@keyframes wave{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;filter:blur(60px);opacity:.85}
 .blob{position:absolute;border-radius:50%;mix-blend-mode:screen}
-.b1{width:46vw;height:46vw;top:-12vw;right:-8vw;background:#FF6FB5;animation:f1 16s ease-in-out infinite}
-.b2{width:42vw;height:42vw;top:6vw;left:-10vw;background:#8B5CF6;animation:f2 19s ease-in-out infinite}
-.b3{width:38vw;height:38vw;top:34vw;right:14vw;background:#36D1FF;animation:f3 22s ease-in-out infinite}
+.b1{width:46vw;height:46vw;top:-12vw;right:-8vw;background:#FF4FA3;animation:f1 11s ease-in-out infinite}
+.b2{width:42vw;height:42vw;top:6vw;left:-10vw;background:#8B5CF6;animation:f2 13s ease-in-out infinite}
+.b3{width:38vw;height:38vw;top:34vw;right:14vw;background:#36D1FF;animation:f3 15s ease-in-out infinite}
+.b4{width:34vw;height:34vw;top:24vw;left:18vw;background:#A855F7;animation:f1 17s ease-in-out infinite}
 .blob.still{animation:none}
-@keyframes f1{50%{transform:translate(-4vw,6vw) scale(1.1)}}
-@keyframes f2{50%{transform:translate(5vw,-3vw) scale(1.08)}}
-@keyframes f3{50%{transform:translate(-3vw,-5vw) scale(1.12)}}
+@keyframes f1{50%{transform:translate(-6vw,8vw) scale(1.18)}}
+@keyframes f2{50%{transform:translate(7vw,-5vw) scale(1.14)}}
+@keyframes f3{50%{transform:translate(-5vw,-7vw) scale(1.2)}}
 
 .topbar{position:relative;z-index:3;display:flex;align-items:center;gap:18px;max-width:1080px;margin:0 auto;padding:22px 24px}
 .brand{display:flex;align-items:center;gap:10px;margin-inline-end:auto}
