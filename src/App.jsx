@@ -340,6 +340,11 @@ const PLANS = [
   { id: "biz", nameKey: "p3", price: 99, credits: 600 },
 ];
 
+// تسميات أزرار الحفظ والمعاينة بكل اللغات
+const L_SAVE = { ar:"حفظ", en:"Save", ku:"پاشەکەوت", fa:"ذخیره", ur:"محفوظ کریں", tr:"Kaydet", fr:"Enregistrer", es:"Guardar", de:"Speichern", ru:"Скачать", hi:"सहेजें" };
+const L_VIEW = { ar:"عرض بحجم كامل", en:"Full view", ku:"بینینی تەواو", fa:"نمایش کامل", ur:"مکمل دیکھیں", tr:"Tam görünüm", fr:"Plein écran", es:"Pantalla completa", de:"Vollansicht", ru:"Открыть", hi:"पूरा देखें" };
+const L_DL = { ar:"تنزيل", en:"Download", ku:"داگرتن", fa:"دانلود", ur:"ڈاؤن لوڈ", tr:"İndir", fr:"Télécharger", es:"Descargar", de:"Herunterladen", ru:"Скачать", hi:"डाउनलोड" };
+
 export default function App() {
   const [lang, setLang] = useState("ar");
   const [langOpen, setLangOpen] = useState(false);
@@ -359,7 +364,20 @@ export default function App() {
   const [genErr, setGenErr] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
   const [authNote, setAuthNote] = useState("");
+  const [lightbox, setLightbox] = useState(null); // معاينة بحجم كامل {url, mode}
   const taRef = useRef(null);
+
+  // فتح ملف (صورة/فيديو) عبر الخادم كتنزيل مضمون باسم نظيف
+  function downloadOutput(url) {
+    const name = "tayf-" + Date.now();
+    const dl = API_BASE + "/api/download?url=" + encodeURIComponent(url) + "&name=" + encodeURIComponent(name);
+    const link = document.createElement("a");
+    link.href = dl;
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   // ---- الحسابات والتجربة المجانية ----
   const [user, setUser] = useState(null);
@@ -773,16 +791,26 @@ export default function App() {
                       style={{ aspectRatio: generated.ratio.w + "/" + generated.ratio.h }}>
                       <div className="card-glow" />
                       {out ? (
-                        generated.mode === "video" ? (
-                          <video src={out} controls playsInline
-                            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }} />
-                        ) : (
-                          <a href={out} target="_blank" rel="noreferrer"
-                            style={{ display: "block", width: "100%", height: "100%" }}>
-                            <img src={out} alt={"result " + (i + 1)}
+                        <>
+                          {generated.mode === "video" ? (
+                            <video src={out} controls playsInline
                               style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }} />
-                          </a>
-                        )
+                          ) : (
+                            <img src={out} alt={"result " + (i + 1)}
+                              onClick={() => setLightbox({ url: out, mode: "image" })}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit", cursor: "zoom-in" }} />
+                          )}
+                          <div className="card-actions">
+                            <button className="card-act" title={L_VIEW[lang] || L_VIEW.ar}
+                              onClick={() => setLightbox({ url: out, mode: generated.mode })}>
+                              <IconExpand />
+                            </button>
+                            <button className="card-act" title={L_SAVE[lang] || L_SAVE.ar}
+                              onClick={() => downloadOutput(out)}>
+                              <IconDownload />
+                            </button>
+                          </div>
+                        </>
                       ) : (
                         generated.mode === "video" ? <IconVideo /> : <IconImage />
                       )}
@@ -884,6 +912,23 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* معاينة بحجم كامل (صورة/فيديو) */}
+      {lightbox && (
+        <div className="lb-overlay" onClick={() => setLightbox(null)}>
+          <button className="lb-close" onClick={() => setLightbox(null)} aria-label={a.close}>×</button>
+          <div className="lb-stage" onClick={(e) => e.stopPropagation()}>
+            {lightbox.mode === "video" ? (
+              <video src={lightbox.url} controls autoPlay playsInline className="lb-media" />
+            ) : (
+              <img src={lightbox.url} alt="full preview" className="lb-media" />
+            )}
+            <button className="lb-download" onClick={() => downloadOutput(lightbox.url)}>
+              <IconDownload /> {L_DL[lang] || L_DL.ar}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -916,6 +961,8 @@ const IconLayers = () => (<svg viewBox="0 0 24 24" {...s}><path d="M12 3l9 5-9 5
 const IconShield = () => (<svg viewBox="0 0 24 24" {...s}><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>);
 const IconGlobe = () => (<svg viewBox="0 0 24 24" {...s}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>);
 const IconChevron = () => (<svg viewBox="0 0 24 24" {...s}><path d="M6 9l6 6 6-6"/></svg>);
+const IconDownload = () => (<svg viewBox="0 0 24 24" {...s}><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>);
+const IconExpand = () => (<svg viewBox="0 0 24 24" {...s}><path d="M9 3H4v5"/><path d="M15 3h5v5"/><path d="M20 16v5h-5"/><path d="M4 16v5h5"/></svg>);
 
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;800&display=swap');
@@ -1048,6 +1095,26 @@ main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px 8
 .card svg{width:30px;height:30px;position:relative;z-index:1}
 .card-glow{position:absolute;inset:0;background:var(--spectrum);opacity:.1}
 .card-num{position:absolute;top:8px;inset-inline-start:10px;font-size:12px;color:var(--muted)}
+.card-actions{position:absolute;top:8px;inset-inline-end:8px;display:flex;gap:6px;z-index:2;opacity:0;transition:.18s}
+.card:hover .card-actions{opacity:1}
+.card-act{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;
+  background:rgba(10,10,16,.62);border:1px solid rgba(255,255,255,.18);color:#fff;cursor:pointer;backdrop-filter:blur(6px);transition:.15s}
+.card-act:hover{background:rgba(10,10,16,.85);border-color:rgba(255,255,255,.4)}
+.card-act svg{width:18px;height:18px}
+@media(hover:none){.card-actions{opacity:1}}
+
+.lb-overlay{position:fixed;inset:0;z-index:60;background:rgba(5,5,9,.9);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .2s ease}
+.lb-close{position:absolute;top:18px;inset-inline-end:22px;background:transparent;border:none;color:#fff;
+  font-size:34px;line-height:1;cursor:pointer;opacity:.85}
+.lb-close:hover{opacity:1}
+.lb-stage{display:flex;flex-direction:column;align-items:center;gap:16px;max-width:92vw;max-height:88vh}
+.lb-media{max-width:92vw;max-height:74vh;border-radius:14px;box-shadow:0 30px 90px -20px rgba(0,0,0,.9);object-fit:contain}
+.lb-download{display:inline-flex;align-items:center;gap:9px;background:var(--spectrum);border:none;color:#0B0B10;
+  font-family:'Tajawal','Noto Sans',sans-serif;font-weight:800;font-size:16px;padding:13px 28px;border-radius:999px;
+  cursor:pointer;transition:.2s;box-shadow:0 12px 34px -12px rgba(110,126,168,.6)}
+.lb-download:hover{transform:translateY(-1px)}
+.lb-download svg{width:18px;height:18px}
 .note{margin-top:16px;font-size:13px;color:var(--muted);line-height:1.8;background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:14px}
 
 .gallery{margin-top:72px}
