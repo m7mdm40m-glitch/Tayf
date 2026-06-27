@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>الشروط والأحكام | طيف</title>
+<meta name="description" content="الشروط والأحكام لاستخدام منصة طيف لتوليد الصور والفيديو بالذكاء الاصطناعي." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://tayf.art/terms.html" />
+<meta name="theme-color" content="#0A0A0C" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0A0A0C; --ink2:#131318; --surface:#16161C; --surface2:#1D1D25;
+    --line:rgba(255,255,255,.11); --text:#F4F3F1; --muted:#A8A69C; --gold:#C9A86A;
+    --spectrum:linear-gradient(115deg,#9D4EFF 0%,#FF2E97 50%,#22B4EE 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);color:var(--text);
+    font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+    font-size:16px;line-height:2;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 50% -10%, rgba(157,78,255,.10) 0%, rgba(10,10,12,0) 60%);
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 90px}
+  /* الشريط العلوي */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:22px 0 18px;position:sticky;top:0;background:rgba(10,10,12,.82);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:10;margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text)}
+  .brand-logo{width:38px;height:38px;border-radius:11px;flex:none}
+  .brand-name{font-family:'Cairo',sans-serif;font-weight:900;font-size:22px;letter-spacing:.5px}
+  .back-link{font-family:'Cairo',sans-serif;font-weight:700;font-size:13.5px;color:var(--muted);
+    text-decoration:none;border:1px solid var(--line);padding:8px 14px;border-radius:10px;transition:.18s;white-space:nowrap}
+  .back-link:hover{color:var(--text);border-color:rgba(201,168,106,.5)}
+  /* الترويسة */
+  header.page{padding:46px 0 30px;border-bottom:1px solid var(--line);margin-bottom:34px}
+  .eyebrow{display:inline-block;font-family:'Cairo',sans-serif;font-weight:700;font-size:12.5px;
+    letter-spacing:2px;color:#0B0B10;background:var(--spectrum);padding:5px 14px;border-radius:999px;margin-bottom:18px}
+  h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:40px;line-height:1.25;color:var(--text)}
+  .updated{color:var(--muted);font-size:14.5px;margin-top:12px}
+  .intro{color:var(--muted);font-size:16px;margin-top:18px;max-width:640px}
+  /* الأقسام */
+  section{margin-bottom:34px;scroll-margin-top:90px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+  .sec-num{font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;color:var(--gold);
+    flex:none;min-width:30px}
+  h2{font-family:'Cairo',sans-serif;font-weight:800;font-size:22px;color:var(--text);line-height:1.4}
+  section p{color:#D4D2CC;margin:0 0 12px;padding-inline-start:42px}
+  section p:last-child{margin-bottom:0}
+  ul{list-style:none;padding-inline-start:42px;margin:0 0 12px}
+  ul li{position:relative;padding-inline-start:20px;margin-bottom:9px;color:#D4D2CC}
+  ul li::before{content:"";position:absolute;inset-inline-start:0;top:14px;width:7px;height:7px;
+    border-radius:50%;background:var(--gold);opacity:.85}
+  strong{color:var(--text);font-weight:600}
+  a.inline{color:#C9A8FF;text-decoration:none;border-bottom:1px solid rgba(201,168,170,.3)}
+  a.inline:hover{color:#E4D2FF}
+  /* صندوق تنبيه */
+  .note{background:var(--surface2);border:1px solid var(--line);border-inline-start:3px solid var(--gold);
+    border-radius:14px;padding:18px 20px;margin:30px 0;color:var(--muted);font-size:14.5px;line-height:1.9}
+  .note strong{color:var(--gold)}
+  /* تذييل */
+  footer{margin-top:54px;padding-top:26px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between}
+  .foot-links{display:flex;gap:8px;flex-wrap:wrap}
+  .foot-links a{font-family:'Cairo',sans-serif;font-weight:700;font-size:13.5px;color:var(--muted);
+    text-decoration:none;padding:7px 13px;border-radius:9px;border:1px solid var(--line);transition:.18s}
+  .foot-links a:hover{color:var(--text);border-color:rgba(201,168,106,.5)}
+  .foot-links a.cur{color:var(--gold);border-color:rgba(201,168,106,.5)}
+  .copy{color:#6E6C7E;font-size:13px}
+  @media(max-width:560px){
+    h1{font-size:30px}
+    h2{font-size:19px}
+    section p,ul{padding-inline-start:0}
+    .sec-head{gap:8px}
+    .brand-name{font-size:19px}
+  }
+  :focus-visible{outline:2px solid #9D4EFF;outline-offset:3px;border-radius:6px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="https://tayf.art" aria-label="العودة إلى طيف">
+        <svg class="brand-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#9D4EFF"/><stop offset="0.5" stop-color="#FF2E97"/><stop offset="1" stop-color="#22B4EE"/>
+          </linearGradient></defs>
+          <rect width="64" height="64" rx="15" fill="url(#g)"/>
+          <text x="30" y="46" font-family="Arial, sans-serif" font-size="42" font-weight="900" fill="#fff" text-anchor="middle">T</text>
+          <text x="49" y="20" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#fff" text-anchor="middle" opacity="0.95">AI</text>
+        </svg>
+        <span class="brand-name">طيف</span>
+      </a>
+      <a class="back-link" href="https://tayf.art">العودة للموقع ←</a>
+    </div>
+
+    <header class="page">
+      <span class="eyebrow">الوثائق القانونية</span>
+      <h1>الشروط والأحكام</h1>
+      <p class="updated">آخر تحديث: ٢٧ حزيران ٢٠٢٦</p>
+      <p class="intro">باستخدامك منصّة طيف فأنت توافق على الشروط التالية. الرجاء قراءتها بعناية قبل إنشاء حساب أو استخدام الخدمة.</p>
+    </header>
+
+    <section id="acceptance">
+      <div class="sec-head"><span class="sec-num">١</span><h2>قبول الشروط</h2></div>
+      <p>تُمثّل هذه الوثيقة اتفاقاً بينك وبين منصّة <strong>طيف</strong> (المتاحة عبر الموقع tayf.art، ويُشار إليها بـ«المنصّة» أو «نحن»). عند تسجيلك أو استخدامك للمنصّة بأي شكل، فإنك تُقرّ بأنك قرأت هذه الشروط وفهمتها ووافقت على الالتزام بها. إذا كنت لا توافق على أي جزء منها، فالرجاء عدم استخدام المنصّة.</p>
+    </section>
+
+    <section id="service">
+      <div class="sec-head"><span class="sec-num">٢</span><h2>وصف الخدمة</h2></div>
+      <p>طيف منصّة تتيح توليد الصور ومقاطع الفيديو باستخدام نماذج الذكاء الاصطناعي، انطلاقاً من وصف نصّي يكتبه المستخدم. تعتمد المنصّة على مزوّدي خدمات خارجيين لتشغيل نماذج التوليد، وقد تتغيّر الميزات أو النماذج المتاحة من وقت لآخر بهدف تطوير الخدمة.</p>
+    </section>
+
+    <section id="account">
+      <div class="sec-head"><span class="sec-num">٣</span><h2>الحساب والتسجيل</h2></div>
+      <ul>
+        <li>يجب تقديم بريد إلكتروني صحيح، وتفعيل الحساب عبر رابط التأكيد المُرسَل إليك.</li>
+        <li>أنت مسؤول عن الحفاظ على سرّية كلمة المرور الخاصة بك وعن كل النشاط الذي يجري عبر حسابك.</li>
+        <li>تتعهّد بأن المعلومات التي تقدّمها صحيحة، وبألّا تنتحل هوية شخص أو جهة أخرى.</li>
+        <li>يُمنع مشاركة الحساب أو بيعه أو نقله لطرف آخر دون موافقتنا.</li>
+      </ul>
+    </section>
+
+    <section id="credits">
+      <div class="sec-head"><span class="sec-num">٤</span><h2>الرصيد والاشتراكات</h2></div>
+      <ul>
+        <li>تمنح المنصّة رصيداً مجانياً محدوداً عند تفعيل الحساب لأول مرة لتجربة الخدمة.</li>
+        <li>تستهلك كل عملية توليد جزءاً من رصيدك بحسب نوع المخرَج (صورة أو فيديو) وجودته.</li>
+        <li>يمكن الحصول على رصيد إضافي أو اشتراك عبر وسائل الدفع المتاحة على المنصّة.</li>
+        <li><strong>الرصيد المُستهلَك غير قابل للاسترجاع</strong>، نظراً لطبيعة الخدمة الرقمية الفورية. تُراجَع طلبات الاسترجاع لحالات الخطأ التقني الموثَّق فقط، وفق تقديرنا.</li>
+      </ul>
+    </section>
+
+    <section id="acceptable-use">
+      <div class="sec-head"><span class="sec-num">٥</span><h2>الاستخدام المقبول والمحتوى المحظور</h2></div>
+      <p>توافق على عدم استخدام المنصّة لتوليد أو نشر أيٍّ من المحتوى التالي:</p>
+      <ul>
+        <li>أي محتوى غير قانوني، أو ينتهك القوانين المعمول بها.</li>
+        <li>محتوى يستغلّ القاصرين أو يؤذيهم بأي شكل (يُمنع منعاً باتّاً ويُبلَّغ عنه فوراً).</li>
+        <li>محتوى جنسي فاضح أو إباحي.</li>
+        <li>تزييف أو انتحال صور أشخاص حقيقيين (Deepfake) بهدف التضليل أو التشهير أو الاحتيال، أو دون إذنهم.</li>
+        <li>محتوى يحرّض على الكراهية أو العنف أو الإرهاب، أو يستهدف فئة بناءً على الدين أو العرق أو الجنس أو غيره.</li>
+        <li>محتوى ينتهك حقوق الملكية الفكرية أو العلامات التجارية لطرف آخر.</li>
+        <li>محتوى احتيالي أو مضلِّل أو يهدف لخداع الآخرين.</li>
+        <li>أي محاولة لاختراق المنصّة أو إساءة استخدام أنظمتها أو تجاوز حدود الاستخدام.</li>
+      </ul>
+      <p>أنت وحدك المسؤول قانونياً عن المحتوى الذي تولّده وعن طريقة استخدامك له.</p>
+    </section>
+
+    <section id="content-rights">
+      <div class="sec-head"><span class="sec-num">٦</span><h2>ملكية المحتوى المُولَّد</h2></div>
+      <p>المخرجات التي تنشئها عبر المنصّة تعود لك ضمن الحدود التي تسمح بها شروط مزوّدي نماذج الذكاء الاصطناعي المستخدمة. ومع ذلك، تبقى أنت المسؤول عن التأكّد من أن استخدامك لهذه المخرجات لا ينتهك حقوق الآخرين أو القوانين. لا تضمن المنصّة أن المخرجات فريدة أو خالية من التشابه مع أعمال أخرى.</p>
+    </section>
+
+    <section id="platform-rights">
+      <div class="sec-head"><span class="sec-num">٧</span><h2>حقوق المنصّة</h2></div>
+      <p>نحتفظ بالحق في تعليق أو إيقاف أي حساب يخالف هذه الشروط، وفي إزالة أي محتوى مخالف، وفي تعديل الميزات أو الأسعار أو إيقاف الخدمة كلياً أو جزئياً، مع السعي لإشعار المستخدمين عند التغييرات الجوهرية قدر الإمكان.</p>
+    </section>
+
+    <section id="disclaimer">
+      <div class="sec-head"><span class="sec-num">٨</span><h2>إخلاء المسؤولية</h2></div>
+      <p>تُقدَّم الخدمة «كما هي» ودون أي ضمانات. بحكم طبيعة الذكاء الاصطناعي، قد تكون المخرجات غير دقيقة أو غير متوقّعة أو غير مناسبة لغرضك. لا نتحمّل مسؤولية أي قرارات أو أضرار تنتج عن اعتمادك على هذه المخرجات.</p>
+    </section>
+
+    <section id="liability">
+      <div class="sec-head"><span class="sec-num">٩</span><h2>حدود المسؤولية</h2></div>
+      <p>إلى أقصى حدّ يسمح به القانون، لا تتحمّل المنصّة المسؤولية عن أي أضرار غير مباشرة أو تبعية ناتجة عن استخدامك للخدمة. وفي جميع الأحوال، لا تتجاوز مسؤوليتنا الإجمالية المبلغ الذي دفعته للمنصّة خلال الأشهر الثلاثة السابقة للحادثة.</p>
+    </section>
+
+    <section id="changes">
+      <div class="sec-head"><span class="sec-num">١٠</span><h2>تعديل الشروط</h2></div>
+      <p>قد نُحدّث هذه الشروط من وقت لآخر. عند إجراء تغييرات جوهرية سنُحدّث تاريخ «آخر تحديث» أعلى الصفحة، ويُعدّ استمرارك في استخدام المنصّة بعد التعديل موافقةً على النسخة المحدّثة.</p>
+    </section>
+
+    <section id="law">
+      <div class="sec-head"><span class="sec-num">١١</span><h2>القانون الحاكم</h2></div>
+      <p>تخضع هذه الشروط للقوانين المعمول بها في جمهورية العراق، وتُحلّ أي نزاعات وفقاً لها.</p>
+    </section>
+
+    <section id="contact">
+      <div class="sec-head"><span class="sec-num">١٢</span><h2>التواصل</h2></div>
+      <p>لأي استفسار بخصوص هذه الشروط، يمكنك التواصل معنا عبر البريد: <a class="inline" href="mailto:tayff.art@gmail.com" dir="ltr">tayff.art@gmail.com</a></p>
+    </section>
+
+    <div class="note">
+      <strong>ملاحظة:</strong> هذه الوثيقة صيغة عامّة لأغراض الوضوح والشفافية مع المستخدمين، وليست استشارة قانونية. يُنصح بمراجعتها مع مختصّ قانوني لتتوافق مع متطلّبات نشاطك وبوابات الدفع التي تستخدمها.
+    </div>
+
+    <footer>
+      <div class="foot-links">
+        <a class="cur" href="/terms.html">الشروط والأحكام</a>
+        <a href="/privacy.html">سياسة الخصوصية</a>
+        <a href="https://tayf.art">الرئيسية</a>
+      </div>
+      <span class="copy">© ٢٠٢٦ طيف — جميع الحقوق محفوظة</span>
+    </footer>
+  </div>
+</body>
+</html>

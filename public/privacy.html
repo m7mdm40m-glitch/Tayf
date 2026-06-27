@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>سياسة الخصوصية | طيف</title>
+<meta name="description" content="سياسة الخصوصية لمنصة طيف: كيف نجمع بياناتك ونستخدمها ونحميها." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://tayf.art/privacy.html" />
+<meta name="theme-color" content="#0A0A0C" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0A0A0C; --ink2:#131318; --surface:#16161C; --surface2:#1D1D25;
+    --line:rgba(255,255,255,.11); --text:#F4F3F1; --muted:#A8A69C; --gold:#C9A86A;
+    --spectrum:linear-gradient(115deg,#9D4EFF 0%,#FF2E97 50%,#22B4EE 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);color:var(--text);
+    font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+    font-size:16px;line-height:2;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 50% -10%, rgba(157,78,255,.10) 0%, rgba(10,10,12,0) 60%);
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 90px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:22px 0 18px;position:sticky;top:0;background:rgba(10,10,12,.82);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:10;margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text)}
+  .brand-logo{width:38px;height:38px;border-radius:11px;flex:none}
+  .brand-name{font-family:'Cairo',sans-serif;font-weight:900;font-size:22px;letter-spacing:.5px}
+  .back-link{font-family:'Cairo',sans-serif;font-weight:700;font-size:13.5px;color:var(--muted);
+    text-decoration:none;border:1px solid var(--line);padding:8px 14px;border-radius:10px;transition:.18s;white-space:nowrap}
+  .back-link:hover{color:var(--text);border-color:rgba(201,168,106,.5)}
+  header.page{padding:46px 0 30px;border-bottom:1px solid var(--line);margin-bottom:34px}
+  .eyebrow{display:inline-block;font-family:'Cairo',sans-serif;font-weight:700;font-size:12.5px;
+    letter-spacing:2px;color:#0B0B10;background:var(--spectrum);padding:5px 14px;border-radius:999px;margin-bottom:18px}
+  h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:40px;line-height:1.25;color:var(--text)}
+  .updated{color:var(--muted);font-size:14.5px;margin-top:12px}
+  .intro{color:var(--muted);font-size:16px;margin-top:18px;max-width:640px}
+  section{margin-bottom:34px;scroll-margin-top:90px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+  .sec-num{font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;color:var(--gold);
+    flex:none;min-width:30px}
+  h2{font-family:'Cairo',sans-serif;font-weight:800;font-size:22px;color:var(--text);line-height:1.4}
+  section p{color:#D4D2CC;margin:0 0 12px;padding-inline-start:42px}
+  section p:last-child{margin-bottom:0}
+  ul{list-style:none;padding-inline-start:42px;margin:0 0 12px}
+  ul li{position:relative;padding-inline-start:20px;margin-bottom:9px;color:#D4D2CC}
+  ul li::before{content:"";position:absolute;inset-inline-start:0;top:14px;width:7px;height:7px;
+    border-radius:50%;background:var(--gold);opacity:.85}
+  strong{color:var(--text);font-weight:600}
+  a.inline{color:#C9A8FF;text-decoration:none;border-bottom:1px solid rgba(201,168,170,.3)}
+  a.inline:hover{color:#E4D2FF}
+  .note{background:var(--surface2);border:1px solid var(--line);border-inline-start:3px solid var(--gold);
+    border-radius:14px;padding:18px 20px;margin:30px 0;color:var(--muted);font-size:14.5px;line-height:1.9}
+  .note strong{color:var(--gold)}
+  footer{margin-top:54px;padding-top:26px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between}
+  .foot-links{display:flex;gap:8px;flex-wrap:wrap}
+  .foot-links a{font-family:'Cairo',sans-serif;font-weight:700;font-size:13.5px;color:var(--muted);
+    text-decoration:none;padding:7px 13px;border-radius:9px;border:1px solid var(--line);transition:.18s}
+  .foot-links a:hover{color:var(--text);border-color:rgba(201,168,106,.5)}
+  .foot-links a.cur{color:var(--gold);border-color:rgba(201,168,106,.5)}
+  .copy{color:#6E6C7E;font-size:13px}
+  @media(max-width:560px){
+    h1{font-size:30px}
+    h2{font-size:19px}
+    section p,ul{padding-inline-start:0}
+    .sec-head{gap:8px}
+    .brand-name{font-size:19px}
+  }
+  :focus-visible{outline:2px solid #9D4EFF;outline-offset:3px;border-radius:6px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="https://tayf.art" aria-label="العودة إلى طيف">
+        <svg class="brand-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#9D4EFF"/><stop offset="0.5" stop-color="#FF2E97"/><stop offset="1" stop-color="#22B4EE"/>
+          </linearGradient></defs>
+          <rect width="64" height="64" rx="15" fill="url(#g)"/>
+          <text x="30" y="46" font-family="Arial, sans-serif" font-size="42" font-weight="900" fill="#fff" text-anchor="middle">T</text>
+          <text x="49" y="20" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#fff" text-anchor="middle" opacity="0.95">AI</text>
+        </svg>
+        <span class="brand-name">طيف</span>
+      </a>
+      <a class="back-link" href="https://tayf.art">العودة للموقع ←</a>
+    </div>
+
+    <header class="page">
+      <span class="eyebrow">الوثائق القانونية</span>
+      <h1>سياسة الخصوصية</h1>
+      <p class="updated">آخر تحديث: ٢٧ حزيران ٢٠٢٦</p>
+      <p class="intro">نحترم خصوصيتك ونلتزم بحماية بياناتك. توضّح هذه السياسة ما الذي نجمعه منك، وكيف نستخدمه، ومع مَن نشاركه، وما هي حقوقك.</p>
+    </header>
+
+    <section id="intro">
+      <div class="sec-head"><span class="sec-num">١</span><h2>مقدمة</h2></div>
+      <p>تنطبق هذه السياسة على منصّة <strong>طيف</strong> (المتاحة عبر tayf.art). باستخدامك للمنصّة فإنك توافق على جمع بياناتك ومعالجتها وفق ما هو موضّح أدناه. إن لم توافق، فالرجاء عدم استخدام الخدمة.</p>
+    </section>
+
+    <section id="data-collect">
+      <div class="sec-head"><span class="sec-num">٢</span><h2>البيانات التي نجمعها</h2></div>
+      <p>نجمع الحدّ الأدنى من البيانات اللازمة لتشغيل الخدمة:</p>
+      <ul>
+        <li><strong>بيانات الحساب:</strong> الاسم والبريد الإلكتروني الذي تُسجّل به.</li>
+        <li><strong>كلمة المرور:</strong> تُخزَّن بصيغة <strong>مشفّرة</strong> (hashed) ولا يمكننا الاطّلاع عليها كنصّ صريح.</li>
+        <li><strong>محتواك:</strong> الأوصاف النصّية التي تكتبها والأعمال (الصور/الفيديو) التي تولّدها عبر المنصّة.</li>
+        <li><strong>بيانات الاستخدام والرصيد:</strong> عدد العمليات ورصيدك وحالة الاشتراك.</li>
+        <li><strong>بيانات تقنية أساسية:</strong> معلومات يجمعها الخادم تلقائياً مثل سجلّات الدخول الأساسية لأغراض التشغيل والأمان.</li>
+      </ul>
+    </section>
+
+    <section id="data-use">
+      <div class="sec-head"><span class="sec-num">٣</span><h2>كيف نستخدم بياناتك</h2></div>
+      <ul>
+        <li>تشغيل حسابك وتمكينك من توليد المحتوى وإدارة رصيدك.</li>
+        <li>إرسال رسائل ضرورية مثل بريد تفعيل الحساب وإشعارات الخدمة.</li>
+        <li>حماية المنصّة من إساءة الاستخدام والاحتيال.</li>
+        <li>تحسين الخدمة وتطوير ميزاتها.</li>
+      </ul>
+      <p>لا نبيع بياناتك الشخصية لأي طرف ثالث.</p>
+    </section>
+
+    <section id="third-parties">
+      <div class="sec-head"><span class="sec-num">٤</span><h2>مزوّدو الخدمات الخارجيون</h2></div>
+      <p>تعتمد المنصّة على خدمات موثوقة لتشغيلها، وقد تتم معالجة بعض بياناتك لديهم بالقدر اللازم فقط:</p>
+      <ul>
+        <li><strong>fal.ai</strong> — تشغيل نماذج توليد الصور والفيديو (يُرسَل الوصف النصّي لإنتاج المخرَج).</li>
+        <li><strong>Anthropic</strong> — ميزة تحسين الوصف بالذكاء الاصطناعي.</li>
+        <li><strong>Resend</strong> — إرسال رسائل البريد الإلكتروني (مثل تفعيل الحساب).</li>
+        <li><strong>Render</strong> و<strong>Vercel</strong> — استضافة الخادم والواجهة.</li>
+        <li><strong>بوابة الدفع</strong> — عند تفعيل المدفوعات مستقبلاً، تُعالَج بيانات الدفع لدى مزوّد الدفع مباشرةً، ولا نخزّن بيانات بطاقتك على خوادمنا.</li>
+      </ul>
+      <p>لكل مزوّد سياسة خصوصية خاصة به تحكم معالجته للبيانات.</p>
+    </section>
+
+    <section id="cookies">
+      <div class="sec-head"><span class="sec-num">٥</span><h2>التخزين المحلي وملفات الارتباط</h2></div>
+      <p>نستخدم تخزيناً محلياً في متصفّحك للاحتفاظ برمز الدخول (token) الذي يبقيك مسجّلاً، ولا نستخدمه للتتبّع الإعلاني. يمكنك تسجيل الخروج أو مسح بيانات المتصفّح لإزالته في أي وقت.</p>
+    </section>
+
+    <section id="security">
+      <div class="sec-head"><span class="sec-num">٦</span><h2>أمان البيانات</h2></div>
+      <p>نتّخذ إجراءات معقولة لحماية بياناتك، تشمل تشفير كلمات المرور ونقل البيانات عبر اتصال آمن (HTTPS). ومع ذلك، لا يمكن ضمان أمان أي نظام عبر الإنترنت بنسبة 100%، لذا ننصحك باستخدام كلمة مرور قوية والحفاظ على سرّيتها.</p>
+    </section>
+
+    <section id="retention">
+      <div class="sec-head"><span class="sec-num">٧</span><h2>الاحتفاظ بالبيانات</h2></div>
+      <p>نحتفظ ببياناتك طالما حسابك فعّال أو بالقدر اللازم لتقديم الخدمة والوفاء بالالتزامات القانونية. عند حذف حسابك، تُحذف بياناتك المرتبطة به وفق دورات التشغيل المعتادة، باستثناء ما يلزم الاحتفاظ به قانونياً.</p>
+    </section>
+
+    <section id="rights">
+      <div class="sec-head"><span class="sec-num">٨</span><h2>حقوقك</h2></div>
+      <ul>
+        <li><strong>الوصول:</strong> طلب معرفة البيانات التي نحتفظ بها عنك.</li>
+        <li><strong>التصحيح:</strong> تحديث معلومات حسابك غير الصحيحة.</li>
+        <li><strong>الحذف:</strong> طلب حذف حسابك وبياناتك المرتبطة به.</li>
+      </ul>
+      <p>لممارسة أيٍّ من هذه الحقوق، راسلنا على البريد الموضّح في قسم التواصل.</p>
+    </section>
+
+    <section id="children">
+      <div class="sec-head"><span class="sec-num">٩</span><h2>خصوصية الأطفال</h2></div>
+      <p>المنصّة غير موجّهة لمن هم دون سن الثامنة عشرة. لا نجمع عمداً بيانات من القاصرين، وإذا تبيّن لنا وجود حساب يخصّ قاصراً فسنعمل على إزالته.</p>
+    </section>
+
+    <section id="changes">
+      <div class="sec-head"><span class="sec-num">١٠</span><h2>تعديل السياسة</h2></div>
+      <p>قد نُحدّث هذه السياسة من وقت لآخر. عند إجراء تغييرات جوهرية سنُحدّث تاريخ «آخر تحديث» أعلى الصفحة، ويُعدّ استمرارك في استخدام المنصّة موافقةً على النسخة المحدّثة.</p>
+    </section>
+
+    <section id="contact">
+      <div class="sec-head"><span class="sec-num">١١</span><h2>التواصل</h2></div>
+      <p>لأي استفسار بخصوص خصوصيتك أو بياناتك، تواصل معنا عبر البريد: <a class="inline" href="mailto:tayff.art@gmail.com" dir="ltr">tayff.art@gmail.com</a></p>
+    </section>
+
+    <div class="note">
+      <strong>ملاحظة:</strong> هذه الوثيقة صيغة عامّة لأغراض الوضوح والشفافية مع المستخدمين، وليست استشارة قانونية. يُنصح بمراجعتها مع مختصّ قانوني لتتوافق مع متطلّبات نشاطك وبوابات الدفع التي تستخدمها.
+    </div>
+
+    <footer>
+      <div class="foot-links">
+        <a href="/terms.html">الشروط والأحكام</a>
+        <a class="cur" href="/privacy.html">سياسة الخصوصية</a>
+        <a href="https://tayf.art">الرئيسية</a>
+      </div>
+      <span class="copy">© ٢٠٢٦ طيف — جميع الحقوق محفوظة</span>
+    </footer>
+  </div>
+</body>
+</html>
