@@ -420,6 +420,7 @@ const ARCH = {
 export default function App() {
   const [lang, setLang] = useState("ar");
   const [langOpen, setLangOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [mode, setMode] = useState("image");
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState("cinematic");
@@ -1162,6 +1163,17 @@ export default function App() {
           <a href="#gallery">{t.nav[1]}</a>
           <a href="#features">{t.nav[2]}</a>
         </nav>
+        <button className="menu-btn" aria-label="القائمة" aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen((v) => !v)}>
+          <span /><span /><span />
+        </button>
+        {mobileNavOpen && (
+          <div className="mobile-nav" onClick={() => setMobileNavOpen(false)}>
+            <a href="#studio">{t.nav[0]}</a>
+            {user && <a href="#mywork">{ar.title}</a>}
+            <a href="#gallery">{t.nav[1]}</a>
+            <a href="#features">{t.nav[2]}</a>
+          </div>
+        )}
 
         {/* مبدّل اللغة */}
         <div className="lang-wrap">
@@ -2507,9 +2519,15 @@ svg.ei{vertical-align:-.14em}
 .mark{width:30px;height:30px;border-radius:9px;background:var(--spectrum);box-shadow:0 0 18px rgba(157,78,255,.5)}
 .brandname{font-weight:900;font-size:25px;letter-spacing:1px}
 .brandname.small{font-size:19px}
-.nav{display:flex;gap:24px;font-size:15.5px;font-weight:600;color:var(--muted)}
-.nav a:hover{color:var(--text)}
-@media(max-width:720px){.nav{display:none}}
+.nav{display:flex;gap:6px;font-size:15.5px;font-weight:700}
+.nav a{position:relative;color:#3A3844;padding:8px 14px;border-radius:10px;transition:.18s;text-decoration:none}
+.nav a:hover{color:var(--text);background:rgba(30,28,38,.06)}
+.menu-btn{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;background:transparent;border:1px solid var(--line-2,rgba(20,18,30,.16));border-radius:12px;cursor:pointer;padding:0 11px}
+.menu-btn span{display:block;height:2px;width:100%;background:var(--text);border-radius:2px;transition:.2s}
+.mobile-nav{position:absolute;top:72px;inset-inline:16px;z-index:40;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px;display:flex;flex-direction:column;gap:2px;box-shadow:0 20px 50px -20px rgba(30,25,50,.25)}
+.mobile-nav a{padding:13px 16px;border-radius:11px;color:var(--text);font-weight:700;font-size:16px;text-decoration:none}
+.mobile-nav a:hover{background:rgba(30,28,38,.06)}
+@media(max-width:720px){.nav{display:none}.menu-btn{display:flex}}
 
 .lang-wrap{position:relative}
 .lang-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--line);
@@ -2583,7 +2601,7 @@ main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px 8
 .model.on{border-color:rgba(157,78,255,.6);box-shadow:0 0 0 1px rgba(157,78,255,.35);background:linear-gradient(180deg,rgba(157,78,255,.12),var(--ink2))}
 .model-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .model-name{font-weight:700;font-size:16px}
-.model-badge{font-size:11px;color:#0B0B10;background:var(--spectrum);padding:3px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+.model-badge{font-size:11px;color:#0B0B10;background:rgba(30,28,38,.09);border:1px solid rgba(30,28,38,.18);padding:3px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
 .model-by{font-size:12px;color:var(--muted)}
 .model.locked{opacity:.55;cursor:not-allowed}
 .model.locked:hover{border-color:var(--line)}
@@ -2712,7 +2730,7 @@ main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px 8
 .acct-field-label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px}
 .acct-pass-head{font-size:14px;font-weight:700;color:var(--text);margin:18px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
 .acct-sub{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
-  border-radius:50%;background:var(--spectrum);color:#0B0B10;font-size:12px;font-weight:800}
+  border-radius:50%;background:#2A2932;color:#F4F3EF;font-size:12px;font-weight:800}
 @media(max-width:620px){.acct-name{display:none}}
 
 .trial-cta{margin-top:26px;display:inline-flex;align-items:center;gap:9px;background:var(--btn);
@@ -2739,7 +2757,7 @@ main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px 8
   color:var(--muted);font-size:22px;line-height:1;cursor:pointer;transition:.2s}
 .modal-close:hover{color:var(--text);background:var(--surface2);border-color:rgba(20,18,30,.22);transform:rotate(90deg)}
 .modal-trial{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#0B0B10;
-  background:var(--spectrum);padding:4px 12px;border-radius:999px;font-weight:700;margin-bottom:14px}
+  background:rgba(30,28,38,.09);border:1px solid rgba(30,28,38,.18);padding:4px 12px;border-radius:999px;font-weight:700;margin-bottom:14px}
 .modal-trial svg{width:13px;height:13px}
 .modal-title{font-size:25px;font-weight:900;margin-bottom:6px}
 .modal-sub{color:var(--muted);font-size:14.5px;margin:0 0 20px}
@@ -2765,7 +2783,7 @@ main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px 8
   border:1px solid var(--line);border-radius:16px;padding:20px 18px}
 .plan.popular{border-color:rgba(157,78,255,.6);box-shadow:0 0 0 1px rgba(157,78,255,.35)}
 .plan-pop{position:absolute;top:-10px;inset-inline-start:18px;font-size:11px;color:#0B0B10;
-  background:var(--spectrum);padding:3px 10px;border-radius:999px;font-weight:700}
+  background:rgba(30,28,38,.09);border:1px solid rgba(30,28,38,.18);padding:3px 10px;border-radius:999px;font-weight:700}
 .plan-name{font-family:'Cairo','Noto Sans',sans-serif;font-weight:700;font-size:18px}
 .plan-price{font-family:'Cairo','Noto Sans',sans-serif;font-weight:800;font-size:32px}
 .plan-price small{font-size:14px;color:var(--muted);font-weight:500}
@@ -2963,7 +2981,7 @@ main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px 8
 .ref-icon{font-size:40px;margin-bottom:10px}
 .ref-title{font-family:'Cairo',sans-serif;font-weight:900;font-size:26px;margin-bottom:10px}
 .ref-desc{color:var(--muted);font-size:15px;line-height:1.8;max-width:520px;margin:0 auto 16px}
-.ref-bonus-tag{display:inline-block;background:var(--spectrum);color:#0B0B10;font-weight:800;font-size:13.5px;
+.ref-bonus-tag{display:inline-block;background:rgba(30,28,38,.09);border:1px solid rgba(30,28,38,.18);color:#0B0B10;font-weight:800;font-size:13.5px;
   padding:6px 16px;border-radius:999px;margin-bottom:20px}
 .ref-link-row{display:flex;gap:10px;max-width:540px;margin:0 auto 12px;flex-wrap:wrap}
 .ref-link-input{flex:1;min-width:200px;background:var(--ink);border:1px solid var(--line);border-radius:12px;
