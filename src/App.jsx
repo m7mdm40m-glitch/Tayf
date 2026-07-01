@@ -339,8 +339,8 @@ const RATIO_IDS = [
 const VIDEO_MODELS = [
   { id: "kling26", label: "Kling 2.6", by: "Kuaishou", noteKey:"nEco", endpoint: "fal-ai/kling-video/v2.6/pro/text-to-video", badgeKey: "bCheap", mult: 1 },
   { id: "veo3.1", label: "Veo 3.1", by: "Google", noteKey:"nVeo", endpoint: "fal-ai/veo3.1/text-to-video", badgeKey: "bRec", mult: 6 },
-  { id: "kling3", label: "Kling 3.0", by: "Kuaishou", noteKey:"nKling", endpoint: "fal-ai/kling-video/v3.0/text-to-video", badgeKey: "bVal", mult: 4 },
-  { id: "seedance2", label: "Seedance 2.0", by: "ByteDance", noteKey:"nSeed", endpoint: "fal-ai/bytedance/seedance-v2/text-to-video", badgeKey: "", mult: 4 },
+  { id: "kling3", label: "Kling 3.0", by: "Kuaishou", noteKey:"nKling", endpoint: "fal-ai/kling-video/v3/pro/text-to-video", badgeKey: "bVal", mult: 4 },
+  { id: "seedance2", label: "Seedance 2.0", by: "ByteDance", noteKey:"nSeed", endpoint: "fal-ai/bytedance/seedance-2.0/text-to-video", badgeKey: "", mult: 4 },
 ];
 
 // نموذج التجربة المجانية (الأرخص). النماذج الأخرى تُفتح بالاشتراك.
